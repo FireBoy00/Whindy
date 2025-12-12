@@ -5,13 +5,16 @@ import '../models/weather_model.dart';
 
 class WeatherService {
   // static const String _apiKey = 'YOUR_API_KEY';
-  static const String _baseUrl = 'https://api.openweathermap.org/data/2.5/weather';
+  static const String _baseUrl =
+      'https://api.openweathermap.org/data/2.5/weather';
 
   Future<Weather> fetchWeather(String cityName) async {
     final apiKey = dotenv.env['API_KEY'];
     // If no API key is provided, return mock data
     if (apiKey == null || apiKey == 'YOUR_API_KEY') {
-      await Future.delayed(const Duration(seconds: 1)); // Simulate network delay
+      await Future.delayed(
+        const Duration(seconds: 1),
+      ); // Simulate network delay
       return _getMockWeather(cityName);
     }
 
