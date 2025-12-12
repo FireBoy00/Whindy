@@ -44,12 +44,15 @@ This project was developed as a university project to demonstrate core Flutter c
 By default, the app runs in **Mock Mode**, simulating network requests so you can test the UI immediately. To use real weather data:
 
 1.  Get a free API Key from [OpenWeatherMap](https://openweathermap.org/api).
-2.  Open `lib/services/weather_service.dart`.
-3.  Find the `_apiKey` variable and replace `'YOUR_API_KEY'` with your actual key:
-    ```dart
-    static const String _apiKey = '123456789abcdef...'; // Your actual key
+2.  Create a `.env` file in the project root (same level as `pubspec.yaml`):
     ```
-4.  Restart the app.
+    API_KEY=your_actual_api_key_here
+    ```
+3.  The app will automatically load the key from the `.env` file when it starts.
+4.  **Important**: The `.env` file is ignored by git (added to `.gitignore`) to keep your API key secure.
+5.  Restart the app.
+
+**Note**: Never commit your `.env` file to version control!
 
 ## 📂 Project Structure
 

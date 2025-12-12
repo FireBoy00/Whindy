@@ -30,8 +30,9 @@ We use the **Provider** package for state management. This is a standard approac
 
 ### 1. The Entry Point (`main.dart`)
 
-This is where the app starts.
+This is where the app starts. Note that `main()` is now async:
 
+-   **`flutter_dotenv`**: We load the `.env` file at startup using `dotenv.load()`. This must happen before the app runs.
 -   **`MultiProvider`**: We wrap the entire app in this widget. It injects our `WeatherProvider` into the widget tree, making it accessible from _anywhere_ in the app.
 -   **`MaterialApp`**: Sets up the visual theme and navigation.
 
@@ -44,7 +45,12 @@ This is where the app starts.
 
 -   **Responsibility**: Talking to the outside world (Internet).
 -   **`http` package**: Used to send GET requests to OpenWeatherMap.
--   **Mock Logic**: You will notice a check: `if (_apiKey == 'YOUR_API_KEY')`. This allows the app to function for demonstration purposes even without a valid API key by generating fake data based on the city name. This is crucial for reliable presentations where internet or API limits might be issues.
+-   **Environment Variables**: The API key is loaded from the `.env` file using `flutter_dotenv` package:
+    ```dart
+    final apiKey = dotenv.env['API_KEY'];
+    ```
+    This keeps sensitive data out of the source code.
+-   **Mock Logic**: If no API key is provided (or if it's set to 'YOUR_API_KEY'), the service generates mock data based on the city name. This is crucial for reliable presentations where internet or API limits might be issues.
 
 ### 4. The State Manager (`providers/weather_provider.dart`)
 
@@ -81,6 +87,17 @@ Fetching weather takes time (milliseconds to seconds). We use `async` functions 
 ### `JSON Parsing`
 
 APIs send data as text strings formatted as JSON. We use `dart:convert` to turn this text into a Map, and then our Model turns that Map into a Dart Object.
+
+### Environment Variables and Security
+
+We use the **`flutter_dotenv`** package to securely manage the API key:
+
+-   The `.env` file contains sensitive data (API keys) and is **not tracked by git** (it's in `.gitignore`).
+-   At startup, `main.dart` loads the `.env` file.
+-   The service layer accesses the key via `dotenv.env['API_KEY']`.
+-   This approach keeps secrets out of version control and prevents accidental exposure on platforms like GitHub.
+
+**Best Practice**: Always use environment variables for secrets, never hardcode them in your source code.
 
 ---
 
