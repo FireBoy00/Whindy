@@ -29,6 +29,31 @@ class WeatherService {
     }
   }
 
+  /// Fetches weather based on GPS coordinates (latitude and longitude)
+  Future<Weather> fetchWeatherByCoordinates(
+    double latitude,
+    double longitude,
+  ) async {
+    final apiKey = dotenv.env['API_KEY'];
+    // If no API key is provided, return mock data
+    if (apiKey == null || apiKey == 'YOUR_API_KEY') {
+      await Future.delayed(const Duration(seconds: 1));
+      return _getMockWeatherForLocation(latitude, longitude);
+    }
+
+    final response = await http.get(
+      Uri.parse(
+        '$_baseUrl?lat=$latitude&lon=$longitude&appid=$apiKey&units=metric',
+      ),
+    );
+
+    if (response.statusCode == 200) {
+      return Weather.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Failed to load weather data for location');
+    }
+  }
+
   Weather _getMockWeather(String cityName) {
     // Simple mock data generator based on city name length to give some variety
     final temp = 20.0 + (cityName.length % 10);
@@ -39,6 +64,20 @@ class WeatherService {
       iconCode: cityName.length % 2 == 0 ? '01d' : '03d',
       humidity: 50.0 + (cityName.length % 20),
       windSpeed: 5.0 + (cityName.length % 5),
+    );
+  }
+
+  Weather _getMockWeatherForLocation(double latitude, double longitude) {
+    // Generate mock data based on coordinates
+    final temp = 18.0 + (latitude.abs() % 15);
+    final cityName = 'Current Location';
+    return Weather(
+      cityName: cityName,
+      temperature: temp,
+      description: latitude > 0 ? 'Partly Cloudy' : 'Clear Sky',
+      iconCode: latitude > 0 ? '02d' : '01d',
+      humidity: 55.0 + (longitude.abs() % 30),
+      windSpeed: 6.0 + (latitude.abs() % 8),
     );
   }
 }

@@ -27,4 +27,24 @@ class WeatherProvider with ChangeNotifier {
       notifyListeners();
     }
   }
+
+  /// Fetches weather based on GPS coordinates
+  Future<void> fetchWeatherByLocation(double latitude, double longitude) async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      _weather = await _weatherService.fetchWeatherByCoordinates(
+        latitude,
+        longitude,
+      );
+    } catch (e) {
+      _error = e.toString();
+      _weather = null;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
 }
